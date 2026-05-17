@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>강철 오운완 시스템 v6.5</title>
+    <title>강철 오운완 시스템 v6.6</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -45,7 +45,7 @@
             font-size: 22px;
         }
 
-        /* ⏱️ 상단 고정 통합 계기판 (타이머 + 실시간 세트 현황) */
+        /* ⏱️ 상단 고정 통합 계기판 */
         .status-board {
             background-color: var(--card-bg);
             border: 2px solid var(--accent-color);
@@ -275,7 +275,7 @@
             cursor: pointer;
         }
 
-        /* 📅 달력 및 기록 섹션 (최하단 배치 완료) */
+        /* 📅 달력 및 기록 섹션 (하단 배치) */
         .calendar-card {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -348,30 +348,42 @@
             padding: 10px;
             border-bottom: 1px solid #252525;
             font-size: 14px;
-            cursor: pointer;
             border-radius: 6px;
-            transition: background 0.2s;
+            margin-bottom: 8px;
+            background: #222;
             gap: 4px;
-        }
-
-        .log-entry:active {
-            background: #1c2a3a;
         }
 
         .set-row {
             display: flex;
             justify-content: space-between;
-            padding: 2px 0;
+            align-items: center;
+            padding: 4px 0;
             font-size: 13px;
+            border-top: 1px solid #2d2d2d;
         }
+
+        /* ✏️ 원터치 버튼 스타일 */
+        .inline-btn {
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 4px;
+            color: white;
+        }
+        .btn-edit { background-color: var(--edit-color); }
+        .btn-del { background-color: var(--danger-color); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>⚡ 강철 오운완 시스템 v6.5</h1>
-        <p style="color: var(--text-muted); margin: 5px 0 0 0;">실시간 상단 계기판 + 하단 기록 창 개편</p>
+        <h1>⚡ 강철 오운완 시스템 v6.6</h1>
+        <p style="color: var(--text-muted); margin: 5px 0 0 0;">원터치 수정/삭제 버튼 개편 완료</p>
     </header>
 
     <div class="status-board">
@@ -386,6 +398,8 @@
         <button class="tab-btn" id="tab-leg" onclick="switchRoutine('leg')">3일차: LEG/코어</button>
     </div>
 
+    <div id="workoutContainer"></div>
+
     <div class="add-workout-card">
         <div style="font-weight: bold; margin-bottom: 10px; color: var(--accent-color);" id="addTitle">현재 탭에 운동 추가</div>
         <input type="text" id="newWorkoutName" class="add-input" placeholder="예: 벤치프레스, 턱걸이, 크런치">
@@ -397,8 +411,6 @@
         <button class="add-btn" onclick="addNewWorkout()">선택된 루틴에 추가</button>
     </div>
 
-    <div id="workoutContainer"></div>
-
     <div class="calendar-card">
         <div class="calendar-header">
             <span id="calendarMonthYear"></span>
@@ -407,8 +419,7 @@
     </div>
 
     <div class="history-section">
-        <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 5px;" id="historyTitle">오늘의 기록</div>
-        <div style="font-size: 11px; color: var(--edit-color); margin-bottom: 10px;">💡 기록을 터치하면 수정 / 전체 삭제가 가능합니다.</div>
+        <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 10px;" id="historyTitle">오늘의 기록</div>
         <div id="historyContent" style="color: var(--text-muted); font-size: 14px;">선택한 날짜에 기록된 운동이 없습니다.</div>
     </div>
 </div>
@@ -594,7 +605,7 @@
         container.innerHTML = '';
 
         if(routineData[currentRoutine].length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size:14px;">루틴이 비어있습니다. 위에서 운동을 추가하십시오!</div>`;
+            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size:14px;">루틴이 비어있습니다. 아래에서 운동을 추가하십시오!</div>`;
             return;
         }
 
@@ -700,7 +711,6 @@
 
         localStorage.setItem('workout_db', JSON.stringify(database));
         
-        // 💡 핵심: 상단 고정 전광판에 현재 몇 세트 완료했는지 즉각 연동 표시
         const liveCounterBox = document.getElementById('liveCounterBox');
         liveCounterBox.innerHTML = `📢 최근 완료: <span style="color:#fff;">${name} [${weightText}]</span> ➔ <span style="color:#4caf50; font-size:15px; text-decoration:underline;">${totalSetsNum}세트째</span> 폭격 완료! 🔥`;
 
@@ -709,6 +719,7 @@
         startTimer(item.rest);
     }
 
+    // 🛠️ v6.6 개편: 직관적인 원터치 개별 삭제 및 수정 기능 함수 구현
     function showHistoryAt(dateStr) {
         document.getElementById('historyTitle').innerText = `📅 ${dateStr}의 전체 기록 피드`;
         const content = document.getElementById('historyContent');
@@ -727,40 +738,58 @@
             log.sets.forEach((s, sIdx) => {
                 setRowsHtml += `
                     <div class="set-row">
-                        <span style="color:var(--text-muted); font-size:12px;">└ ${s.setNum}세트</span>
-                        <span style="color:var(--accent-color); font-weight:bold;">${s.reps}회 <small style="color:#666;">(${s.time})</small></span>
+                        <span style="color:var(--text-muted); font-size:12px;">└ ${s.setNum}세트: ${s.reps}회 <small style="color:#555;">(${s.time})</small></span>
+                        <div>
+                            <button class="inline-btn btn-edit" onclick="editSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">✏️ 수정</button>
+                            <button class="inline-btn btn-del" onclick="deleteSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">🗑️ 삭제</button>
+                        </div>
                     </div>
                 `;
             });
 
             row.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-weight:bold; border-bottom:1px dashed #333; padding-bottom:3px;">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; padding: 6px; background:#2a2a2a; border-radius:4px 4px 0 0;">
                     <span>${log.name}</span>
                     <span style="color:#ff9800;">[${log.weightDisplay}]</span>
                 </div>
-                ${setRowsHtml}
+                <div style="padding: 6px;">
+                    ${setRowsHtml}
+                </div>
             `;
             
-            row.onclick = () => {
-                const choice = prompt(`[${log.name}] 기록 편집창\n\n1: 전체 세트 삭제\n2: 마지막 세트 횟수 수정\n원하는 작업 번호를 입력하십시오.`);
-                
-                if (choice === '1') {
-                    if (confirm("이 종목의 기록을 통째로 지우시겠습니까?")) {
-                        database[dateStr].splice(groupIdx, 1);
-                        saveAndReloadHistory(dateStr);
-                    }
-                } else if (choice === '2') {
-                    const lastSet = log.sets[log.sets.length - 1];
-                    const newReps = prompt(`마지막 ${lastSet.setNum}세트의 수정할 횟수를 입력하십시오.`, lastSet.reps);
-                    if (newReps !== null && !isNaN(newReps) && newReps.trim() !== "") {
-                        lastSet.reps = parseInt(newReps);
-                        saveAndReloadHistory(dateStr);
-                    }
-                }
-            };
-
             content.appendChild(row);
         });
+    }
+
+    // ✏️ 세트 단위 즉각 수정 기능
+    function editSpecificSet(dateStr, groupIdx, sIdx) {
+        const log = database[dateStr][groupIdx];
+        const targetSet = log.sets[sIdx];
+        const newReps = prompt(`[${log.name}] ${targetSet.setNum}세트의 수정할 횟수를 입력하십시오.`, targetSet.reps);
+        
+        if (newReps !== null && !isNaN(newReps) && newReps.trim() !== "") {
+            targetSet.reps = parseInt(newReps);
+            saveAndReloadHistory(dateStr);
+        }
+    }
+
+    // 🗑️ 세트 단위 즉각 삭제 기능
+    function deleteSpecificSet(dateStr, groupIdx, sIdx) {
+        if (!confirm("이 세트 기록을 완전히 삭제하시겠습니까?")) return;
+
+        const log = database[dateStr][groupIdx];
+        log.sets.splice(sIdx, 1);
+
+        // 해당 중량 운동의 모든 세트가 지워졌다면 종목 통째로 삭제
+        if (log.sets.length === 0) {
+            database[dateStr].splice(groupIdx, 1);
+        } else {
+            // 남은 세트들의 번호를 1세트부터 다시 정렬
+            log.sets.forEach((s, index) => {
+                s.setNum = index + 1;
+            });
+        }
+        saveAndReloadHistory(dateStr);
     }
 
     function saveAndReloadHistory(dateStr) {
