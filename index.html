@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>강철 오운완 시스템 v6.0</title>
+    <title>강철 오운완 시스템 v6.5</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -13,6 +13,7 @@
             --text-muted: #aaaaaa;
             --danger-color: #e57373;
             --edit-color: #64b5f6;
+            --info-color: #ff9800;
         }
 
         body {
@@ -44,8 +45,8 @@
             font-size: 22px;
         }
 
-        /* ⏱️ 타이머 카드 (상단 고정) */
-        .timer-card {
+        /* ⏱️ 상단 고정 통합 계기판 (타이머 + 실시간 세트 현황) */
+        .status-board {
             background-color: var(--card-bg);
             border: 2px solid var(--accent-color);
             border-radius: 12px;
@@ -61,8 +62,19 @@
         .timer-display {
             font-size: 2.5rem;
             font-weight: bold;
-            margin: 5px 0;
+            margin: 2px 0;
             font-variant-numeric: tabular-nums;
+        }
+
+        .live-counter {
+            background: #151515;
+            padding: 6px;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--info-color);
+            border: 1px solid #333;
         }
 
         /* 🔄 루틴 탭 스타일 */
@@ -263,13 +275,13 @@
             cursor: pointer;
         }
 
-        /* 📅 달력 및 기록 섹션 (하단 배치) */
+        /* 📅 달력 및 기록 섹션 (최하단 배치 완료) */
         .calendar-card {
             background-color: var(--card-bg);
             border-radius: 12px;
             padding: 15px;
             margin-top: 30px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
@@ -358,13 +370,14 @@
 
 <div class="container">
     <header>
-        <h1>⚡ 강철 오운완 시스템 v6.0</h1>
-        <p style="color: var(--text-muted); margin: 5px 0 0 0;">7대 피드백 전면 수용 완벽판</p>
+        <h1>⚡ 강철 오운완 시스템 v6.5</h1>
+        <p style="color: var(--text-muted); margin: 5px 0 0 0;">실시간 상단 계기판 + 하단 기록 창 개편</p>
     </header>
 
-    <div class="timer-card">
+    <div class="status-board">
         <div class="timer-display" id="timerDisplay">00:00</div>
-        <div style="color: var(--accent-color); font-size: 12px; font-weight: bold;" id="timerStatus">대기 중</div>
+        <div style="color: var(--accent-color); font-size: 12px; font-weight: bold; margin-bottom: 3px;" id="timerStatus">대기 중</div>
+        <div class="live-counter" id="liveCounterBox">현재 진행 중인 세트가 없습니다.</div>
     </div>
 
     <div class="routine-tabs">
@@ -395,7 +408,7 @@
 
     <div class="history-section">
         <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 5px;" id="historyTitle">오늘의 기록</div>
-        <div style="font-size: 11px; color: var(--edit-color); margin-bottom: 10px;">💡 기록을 터치하면 수정 / 삭제 창이 열립니다.</div>
+        <div style="font-size: 11px; color: var(--edit-color); margin-bottom: 10px;">💡 기록을 터치하면 수정 / 전체 삭제가 가능합니다.</div>
         <div id="historyContent" style="color: var(--text-muted); font-size: 14px;">선택한 날짜에 기록된 운동이 없습니다.</div>
     </div>
 </div>
@@ -431,7 +444,7 @@
     let routineData = JSON.parse(localStorage.getItem('routine_db')) || defaultRoutine;
 
     const todayStr = getFormattedDate(new Date());
-    let selectedDateStr = todayStr; // 초기 상태는 무조건 오늘 날짜
+    let selectedDateStr = todayStr;
 
     initCalendar();
     renderWorkouts();
@@ -493,7 +506,6 @@
         }
     }
 
-    // ⏱️ 6번 조항: 탭 전환 시 타이머 리셋 안 되게 처리
     function switchRoutine(routineType) {
         currentRoutine = routineType;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -545,7 +557,6 @@
         }
     }
 
-    // 🔄 5번 조항: 운동 순서 위치 변화 (위/아래) 기능
     function moveWorkout(id, direction) {
         const index = routineData[currentRoutine].findIndex(w => w.id === id);
         if (index === -1) return;
@@ -561,7 +572,6 @@
         renderWorkouts();
     }
 
-    // 📋 5번 조항: 타 분할 탭으로 운동 종목 복사 기능
     function copyWorkoutToOtherTab(id) {
         const item = routineData[currentRoutine].find(w => w.id === id);
         if (!item) return;
@@ -655,9 +665,7 @@
         localStorage.setItem('routine_db', JSON.stringify(routineData));
     }
 
-    // 🔢 2번 & 4번 조항: 당일 기록 제한 및 중량별 세트 분리 자동 누적 시스템 (B안)
     function logSet(id, name) {
-        // 2번 조항: 오늘 날짜가 아니면 기록 원천 차단
         if (selectedDateStr !== todayStr) {
             alert("🔒 운동 기록은 당일(오늘 날짜)만 가능합니다!");
             return;
@@ -672,19 +680,17 @@
         const weightText = item.isBodyweight ? '맨몸' : `${item.weight}kg`;
         const timeText = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
-        // 동일 종목 중 '같은 무게'를 사용하는 최근 기록이 있는지 확인 (B안 조건)
         const existingGroup = database[todayStr].find(log => log.name === name && log.weightDisplay === weightText);
+        let totalSetsNum = 1;
 
         if (existingGroup) {
-            // 무게가 같다면 해당 그룹 내부에 세트 추가 누적
-            const nextSetNum = existingGroup.sets.length + 1;
+            totalSetsNum = existingGroup.sets.length + 1;
             existingGroup.sets.push({
-                setNum: nextSetNum,
+                setNum: totalSetsNum,
                 reps: item.reps,
                 time: timeText
             });
         } else {
-            // 무게나 횟수가 바뀌었거나 첫 세트라면 독립된 한 줄 그룹 생성
             database[todayStr].push({
                 name: name,
                 weightDisplay: weightText,
@@ -694,14 +700,17 @@
 
         localStorage.setItem('workout_db', JSON.stringify(database));
         
+        // 💡 핵심: 상단 고정 전광판에 현재 몇 세트 완료했는지 즉각 연동 표시
+        const liveCounterBox = document.getElementById('liveCounterBox');
+        liveCounterBox.innerHTML = `📢 최근 완료: <span style="color:#fff;">${name} [${weightText}]</span> ➔ <span style="color:#4caf50; font-size:15px; text-decoration:underline;">${totalSetsNum}세트째</span> 폭격 완료! 🔥`;
+
         initCalendar();
         showHistoryAt(todayStr);
         startTimer(item.rest);
     }
 
-    // 📋 1번 & 4번 조항: 세트식 노출 및 터치 수정/삭제 통합 UI
     function showHistoryAt(dateStr) {
-        document.getElementById('historyTitle').innerText = `📅 ${dateStr}의 기록`;
+        document.getElementById('historyTitle').innerText = `📅 ${dateStr}의 전체 기록 피드`;
         const content = document.getElementById('historyContent');
         content.innerHTML = '';
 
@@ -732,7 +741,6 @@
                 ${setRowsHtml}
             `;
             
-            // ✍️ 1번 조항: 터치 시 수정 또는 삭제 선택 팝업 시스템
             row.onclick = () => {
                 const choice = prompt(`[${log.name}] 기록 편집창\n\n1: 전체 세트 삭제\n2: 마지막 세트 횟수 수정\n원하는 작업 번호를 입력하십시오.`);
                 
