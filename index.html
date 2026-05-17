@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>강철 오운완 시스템 v7.7</title>
+    <title>강철 오운완 시스템 v7.8</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -118,37 +118,7 @@
         .btn-add-tab { background-color: #2e7d32; }
         .btn-del-tab { background-color: #c62828; }
 
-        /* 🚀 원 플레이어 제어바 */
-        .player-control-bar {
-            background-color: #252525;
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #333;
-        }
-
-        .player-status-text {
-            font-size: 13px;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .player-main-btn {
-            background-color: #388e3c;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .player-main-btn.active { background-color: #d32f2f; }
-
-        /* 🏋️‍♂️ 원 플레이어 최적화 운동 카드 */
+        /* 🏋️‍♂️ 종목 제어 카드 */
         .workout-card {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -169,40 +139,23 @@
 
         .workout-title { font-size: 18px; font-weight: bold; color: #fff; }
         .workout-meta-summary { font-size: 13px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
-        .main-edit-trigger { background: #333; color: var(--edit-color); border: 1px solid #444; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
-
-        /* 🟢 시각적 세트 게이지 인디케이터 */
-        .set-visual-dots {
+        
+        .header-btn-group {
             display: flex;
-            gap: 4px;
-            margin-top: 6px;
+            gap: 5px;
         }
 
-        .set-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background-color: #333;
-            border: 1px solid #555;
-            display: inline-block;
-        }
+        .main-start-trigger { background: #1b5e20; color: #fff; border: 1px solid #2e7d32; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .main-start-trigger.active { background: #b71c1c; border-color: #c62828; }
+        .main-edit-trigger { background: #333; color: var(--edit-color); border: 1px solid #444; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
 
-        .set-dot.done {
-            background-color: var(--accent-color);
-            border-color: #66bb6a;
-            box-shadow: 0 0 6px var(--accent-color);
-        }
+        /* 🟢 시각적 세트 게이지 */
+        .set-visual-dots { display: flex; gap: 4px; margin-top: 6px; }
+        .set-dot { width: 14px; height: 14px; border-radius: 50%; background-color: #333; border: 1px solid #555; display: inline-block; }
+        .set-dot.done { background-color: var(--accent-color); border-color: #66bb6a; box-shadow: 0 0 6px var(--accent-color); }
 
         /* 🛠️ 수정 제어판 */
-        .workout-expanded-panel {
-            display: none;
-            margin-top: 10px;
-            background: #181818;
-            border-radius: 6px;
-            padding: 8px;
-            border: 1px dashed #444;
-        }
-
+        .workout-expanded-panel { display: none; margin-top: 10px; background: #181818; border-radius: 6px; padding: 8px; border: 1px dashed #444; }
         .panel-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; }
         .panel-row:last-child { margin-bottom: 0; }
         .move-controls { display: flex; gap: 4px; }
@@ -210,17 +163,14 @@
         .panel-btn-del { background-color: var(--danger-color); color: white; font-weight: bold; }
         .panel-rest-input { width: 45px; background: #121212; border: 1px solid #555; color: var(--accent-color); text-align: center; border-radius: 4px; font-weight: bold; padding: 2px; font-size: 12px; }
 
-        /* 🔢 무게/횟수 입력단 조절 UI */
+        /* 🔢 입력 조절 UI */
         .input-group { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 10px; }
         .control-label { width: 45px; font-weight: bold; color: var(--text-muted); font-size: 14px; }
         .counter-btn { background-color: #2d2d2d; color: white; border: 1px solid #444; width: 44px; height: 44px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .counter-btn:active { background-color: #444; }
         .value-display { font-size: 20px; font-weight: bold; width: 90px; text-align: center; color: #fff; }
         .bodyweight-display { font-size: 16px; font-weight: bold; width: 180px; text-align: center; color: var(--accent-color); background: #151515; padding: 10px 0; border-radius: 8px; border: 1px solid #252525; }
 
-        /* 하단 주요 실행 기능 버튼 */
         .log-btn { width: 100%; background-color: var(--accent-color); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); margin-top: 5px; }
-        .log-btn:active { background-color: #388e3c; }
 
         /* ➕ 운동 추가 카드 */
         .add-workout-card { background-color: #252525; border-radius: 12px; padding: 12px; margin-bottom: 15px; border: 1px dashed var(--accent-color); }
@@ -228,7 +178,7 @@
         .checkbox-group { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-size: 13px; color: var(--text-muted); }
         .add-btn { width: 100%; background-color: var(--accent-color); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-        /* 📅 하단 기록 타임라인 */
+        /* 📅 하단 보드 스타일 */
         .calendar-card { background-color: var(--card-bg); border-radius: 12px; padding: 12px; margin-top: 25px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 14px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
@@ -238,6 +188,8 @@
         .calendar-day.has-log::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background-color: var(--accent-color); border-radius: 50%; }
 
         .history-section { background-color: #1a1a1a; border-radius: 12px; padding: 12px; margin-bottom: 30px; border: 1px solid #333; }
+        .history-header-box { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 6px; margin-bottom: 10px; }
+        .btn-clear-all { background-color: #b71c1c; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
         .log-entry { display: flex; flex-direction: column; padding: 8px; border-bottom: 1px solid #252525; font-size: 13px; border-radius: 6px; margin-bottom: 6px; background: #222; gap: 4px; }
         .set-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 12px; border-top: 1px solid #2d2d2d; }
         .inline-btn { padding: 2px 6px; font-size: 11px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; margin-left: 4px; color: white; }
@@ -249,8 +201,8 @@
 
 <div class="container">
     <header>
-        <h1>⚡ 강철 오운완 시스템 v7.7</h1>
-        <p style="color: var(--text-muted); margin: 3px 0 0 0; font-size: 12px;">시각적 세트 대시보드 탑재</p>
+        <h1>⚡ 강철 오운완 시스템 v7.8</h1>
+        <p style="color: var(--text-muted); margin: 3px 0 0 0; font-size: 12px;">종목별 매치 플레이 시스템</p>
     </header>
 
     <div class="status-board">
@@ -259,7 +211,7 @@
         <div class="live-counter" id="liveCounterBox">현재 진행 중인 세트가 없습니다.</div>
     </div>
 
-    <div class="routine-management">
+    <div class="routine-management" id="routineMetaBox">
         <div class="routine-tabs" id="routineTabsContainer"></div>
         <div class="tab-controls">
             <button class="control-btn btn-add-tab" onclick="addCustomRoutine()">➕ 새 루틴 추가</button>
@@ -267,14 +219,9 @@
         </div>
     </div>
 
-    <div class="player-control-bar">
-        <div class="player-status-text" id="playerStatusText">모드: 전체 목록 보기 상태</div>
-        <button class="player-main-btn" id="playerMainBtn" onclick="togglePlayerMode()">▶️ 운동 시작</button>
-    </div>
-
     <div id="workoutContainer"></div>
 
-    <div class="add-workout-card">
+    <div class="add-workout-card" id="addWorkoutBox">
         <div style="font-weight: bold; margin-bottom: 8px; color: var(--accent-color); font-size: 13px;" id="addTitle">현재 탭에 운동 추가</div>
         <input type="text" id="newWorkoutName" class="add-input" placeholder="예: 벤치프레스, 턱걸이, 크런치">
         <input type="number" id="newWorkoutRest" class="add-input" placeholder="휴식 시간 (초 단위, 예: 60, 120)" value="60">
@@ -285,15 +232,18 @@
         <button class="add-btn" onclick="addNewWorkout()">선택된 루틴에 추가</button>
     </div>
 
-    <div class="calendar-card">
+    <div class="calendar-card" id="calendarBox">
         <div class="calendar-header">
             <span id="calendarMonthYear"></span>
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
     </div>
 
-    <div class="history-section">
-        <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 8px; font-size: 14px;" id="historyTitle">오늘의 기록</div>
+    <div class="history-section" id="historyBox">
+        <div class="history-header-box">
+            <div style="font-weight: bold; color: var(--accent-color); font-size: 14px;" id="historyTitle">오늘의 기록</div>
+            <button class="btn-clear-all" onclick="clearAllTodayLogs()">🧹 하루 기록 전체 삭제</button>
+        </div>
         <div id="historyContent" style="color: var(--text-muted); font-size: 13px;">선택한 날짜에 기록된 운동이 없습니다.</div>
     </div>
 </div>
@@ -304,7 +254,6 @@
     
     let database = JSON.parse(localStorage.getItem('workout_db')) || {};
     
-    // 🗂️ 가슴/어깨 통합 루틴 구조 유지
     const defaultRoutine = {
         "1.가슴_어깨": [
             { id: 'p1', name: '벤치프레스', weight: 60, reps: 7, rest: 180, weightUnit: 5, isBodyweight: false },
@@ -325,11 +274,11 @@
         ]
     };
     
-    let routineData = JSON.parse(localStorage.getItem('routine_db_v77')) || defaultRoutine;
+    let routineData = JSON.parse(localStorage.getItem('routine_db_v78')) || defaultRoutine;
     let currentRoutine = Object.keys(routineData)[0] || "1.가슴_어깨";
 
-    let isPlayerRunning = false;
-    let playerCurrentIndex = 0;
+    // 🚀 종목별 독립 구동 타겟 세팅 변수
+    let activeSingleWorkoutId = null;
 
     const todayStr = getFormattedDate(new Date());
     let selectedDateStr = todayStr;
@@ -346,26 +295,27 @@
         return `${yyyy}-${mm}-${dd}`;
     }
 
-    function togglePlayerMode() {
-        const list = routineData[currentRoutine] || [];
-        if(list.length === 0) {
-            alert("수행할 운동 종목이 루틴에 없습니다!");
-            return;
-        }
+    // 🏃 종목별 개별 시작 토글 제어 핵심 함수
+    function toggleSingleWorkoutMode(id) {
+        const metaBox = document.getElementById('routineMetaBox');
+        const addBox = document.getElementById('addWorkoutBox');
+        const calendarBox = document.getElementById('calendarBox');
+        const historyBox = document.getElementById('historyBox');
 
-        const mainBtn = document.getElementById('playerMainBtn');
-        const statusText = document.getElementById('playerStatusText');
-
-        if(!isPlayerRunning) {
-            isPlayerRunning = true;
-            playerCurrentIndex = 0;
-            mainBtn.innerText = "⏹️ 운동 종료";
-            mainBtn.classList.add('active');
+        if(activeSingleWorkoutId === id) {
+            // 종료 버튼을 눌렀을 때: 전체 해제하고 원래대로 복귀
+            activeSingleWorkoutId = null;
+            metaBox.style.display = 'flex';
+            addBox.style.display = 'block';
+            calendarBox.style.display = 'block';
+            historyBox.style.display = 'block';
         } else {
-            isPlayerRunning = false;
-            mainBtn.innerText = "▶️ 운동 시작";
-            mainBtn.classList.remove('active');
-            statusText.innerText = "모드: 전체 목록 보기 상태";
+            // 시작 버튼을 눌렀을 때: 타겟 ID만 저장하고 주변 판넬들 싹 숨김
+            activeSingleWorkoutId = id;
+            metaBox.style.display = 'none';
+            addBox.style.display = 'none';
+            calendarBox.style.display = 'none';
+            historyBox.style.display = 'none';
         }
         renderWorkouts();
     }
@@ -373,29 +323,14 @@
     function renderTabs() {
         const container = document.getElementById('routineTabsContainer');
         container.innerHTML = '';
-        
         const keys = Object.keys(routineData);
-        if(keys.length === 0) {
-            container.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">루틴이 없습니다. 추가하십시오.</div>`;
-            return;
-        }
-
-        if(!keys.includes(currentRoutine)) {
-            currentRoutine = keys[0];
-        }
+        if(keys.length === 0) return;
 
         keys.forEach(key => {
             const btn = document.createElement('button');
             btn.className = `tab-btn ${key === currentRoutine ? 'active' : ''}`;
             btn.innerText = key;
             btn.onclick = () => {
-                if(isPlayerRunning) {
-                    if(!confirm("현재 분할 운동 진행 중입니다. 다른 루틴으로 이동 시 진행 상태가 초기화됩니다. 이동하시겠습니까?")) return;
-                    isPlayerRunning = false;
-                    const mainBtn = document.getElementById('playerMainBtn');
-                    mainBtn.innerText = "▶️ 운동 시작";
-                    mainBtn.classList.remove('active');
-                }
                 currentRoutine = key;
                 renderTabs();
                 renderWorkouts();
@@ -406,15 +341,10 @@
     }
 
     function addCustomRoutine() {
-        const newName = prompt("새로 추가할 루틴 이름을 입력하십시오. (예: 4.팔, 5.휴식일)");
+        const newName = prompt("새로 추가할 루틴 이름을 입력하십시오.");
         if(!newName || !newName.trim()) return;
-        
         const cleanName = newName.trim();
-        if(routineData[cleanName]) {
-            alert("이미 있는 이름입니다.");
-            return;
-        }
-
+        if(routineData[cleanName]) return alert("이미 있는 루틴입니다.");
         routineData[cleanName] = [];
         currentRoutine = cleanName;
         saveRoutineDB();
@@ -423,85 +353,49 @@
     }
 
     function deleteCurrentRoutine() {
-        if(!confirm(`[${currentRoutine}] 루틴을 통째로 제거하겠습니까?`)) return;
-        
+        if(!confirm(`[${currentRoutine}] 루틴을 삭제하시겠습니까?`)) return;
         delete routineData[currentRoutine];
-        const keys = Object.keys(routineData);
-        currentRoutine = keys.length > 0 ? keys[0] : "";
-        
+        currentRoutine = Object.keys(routineData)[0] || "";
         saveRoutineDB();
         renderTabs();
         renderWorkouts();
     }
 
-    function saveRoutineDB() {
-        localStorage.setItem('routine_db_v77', JSON.stringify(routineData));
-    }
+    function saveRoutineDB() { localStorage.setItem('routine_db_v78', JSON.stringify(routineData)); }
 
     function addNewWorkout() {
-        if(!currentRoutine) {
-            alert("루틴 탭을 먼저 만들어 주십시오!");
-            return;
-        }
         const nameInput = document.getElementById('newWorkoutName');
         const restInput = document.getElementById('newWorkoutRest');
         const isBodyweightCheck = document.getElementById('isBodyweight');
-        
-        if (!nameInput.value.trim()) {
-            alert('운동 명칭을 입력하십시오!');
-            return;
-        }
+        if (!nameInput.value.trim()) return alert('운동명을 적으십시오!');
 
         const name = nameInput.value.trim();
         const isHeavy = name.includes('벤치') || name.includes('스쿼트') || name.includes('데드') || name.includes('로우') || name.includes('프레스') || name.includes('ohp');
         const newId = 'custom_' + Date.now();
         
         routineData[currentRoutine].push({
-            id: newId,
-            name: name,
+            id: newId, name: name,
             weight: isBodyweightCheck.checked ? 0 : (isHeavy ? 40 : 10),
-            reps: 10,
-            rest: parseInt(restInput.value) || 60,
-            weightUnit: isHeavy ? 5 : 1,
-            isBodyweight: isBodyweightCheck.checked
+            reps: 10, rest: parseInt(restInput.value) || 60,
+            weightUnit: isHeavy ? 5 : 1, isBodyweight: isBodyweightCheck.checked
         });
-
         saveRoutineDB();
         nameInput.value = '';
         isBodyweightCheck.checked = false;
         renderWorkouts();
     }
 
-    // 🏋️‍♂️ 시각적 세트 게이지 처리 파트
     function renderWorkouts() {
         const container = document.getElementById('workoutContainer');
         container.innerHTML = '';
+        let fullList = routineData[currentRoutine] || [];
 
-        const fullList = routineData[currentRoutine] || [];
-
-        if(fullList.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); font-size:13px;">루틴이 비어있습니다. 아래에서 추가하십시오.</div>`;
-            return;
+        // 🏃 분기 처리: 개별 집중 모드가 켜져있다면 해당 아이템만 필터링하여 출력
+        if(activeSingleWorkoutId !== null) {
+            fullList = fullList.filter(w => w.id === activeSingleWorkoutId);
         }
 
-        let renderTargetList = [];
-        if(isPlayerRunning) {
-            if(playerCurrentIndex >= fullList.length) {
-                document.getElementById('playerStatusText').innerText = "🎉 축하합니다! 오늘의 루틴을 전부 완료하셨습니다!";
-                isPlayerRunning = false;
-                const mainBtn = document.getElementById('playerMainBtn');
-                mainBtn.innerText = "▶️ 운동 시작";
-                mainBtn.classList.remove('active');
-                renderWorkouts();
-                return;
-            }
-            renderTargetList = [fullList[playerCurrentIndex]];
-            document.getElementById('playerStatusText').innerText = `🎯 진행 중: [${playerCurrentIndex + 1} / ${fullList.length}] 번째 운동 폭격 중`;
-        } else {
-            renderTargetList = fullList;
-        }
-
-        renderTargetList.forEach((w) => {
+        fullList.forEach((w) => {
             const card = document.createElement('div');
             card.className = 'workout-card';
 
@@ -511,69 +405,43 @@
                 logged.forEach(l => completedSets += l.sets.length);
             }
 
-            // 🟢 동적 인디케이터 도트 생성 알고리즘 (기본 5세트 기준, 초과 시 완료 수만큼 동적 확장)
             let totalDotsCount = Math.max(5, completedSets);
             let dotsHtml = '';
             for (let i = 0; i < totalDotsCount; i++) {
-                if (i < completedSets) {
-                    dotsHtml += '<span class="set-dot done"></span>';
-                } else {
-                    dotsHtml += '<span class="set-dot"></span>';
-                }
+                dotsHtml += `<span class="set-dot ${i < completedSets ? 'done' : ''}"></span>`;
             }
 
-            let weightSection = '';
-            if (w.isBodyweight) {
-                weightSection = `
-                    <div class="input-group">
-                        <div class="control-label">무게</div>
-                        <div class="bodyweight-display">💪 맨몸 운동</div>
-                    </div>
-                `;
-            } else {
-                weightSection = `
-                    <div class="input-group">
-                        <div class="control-label">무게</div>
-                        <button class="counter-btn" onclick="adjustValue('${w.id}', 'weight', -${w.weightUnit})">-${w.weightUnit}</button>
-                        <div class="value-display" id="${w.id}-weight">${w.weight} kg</div>
-                        <button class="counter-btn" onclick="adjustValue('${w.id}', 'weight', ${w.weightUnit})">+${w.weightUnit}</button>
-                    </div>
-                `;
-            }
+            let weightSection = w.isBodyweight ? 
+                `<div class="input-group"><div class="control-label">무게</div><div class="bodyweight-display">💪 맨몸 운동</div></div>` :
+                `<div class="input-group">
+                    <div class="control-label">무게</div>
+                    <button class="counter-btn" onclick="adjustValue('${w.id}', 'weight', -${w.weightUnit})">-${w.weightUnit}</button>
+                    <div class="value-display" id="${w.id}-weight">${w.weight} kg</div>
+                    <button class="counter-btn" onclick="adjustValue('${w.id}', 'weight', ${w.weightUnit})">+${w.weightUnit}</button>
+                </div>`;
 
-            const primaryBtnText = isPlayerRunning ? "✔️ 이번 세트 완료" : "세트 완료";
+            // 상태에 따른 시작/종료 버튼 스타일 바인딩
+            const isCurrentActive = activeSingleWorkoutId === w.id;
+            const startBtnText = isCurrentActive ? "⏹️ 종목 종료" : "▶️ 운동 시작";
+            const startBtnClass = isCurrentActive ? "main-start-trigger active" : "main-start-trigger";
 
             card.innerHTML = `
                 <div class="workout-main-info">
                     <div>
                         <div class="workout-title">${w.name}</div>
-                        <div class="workout-meta-summary">
-                            <span>⏱️ 휴식: ${w.rest}초</span>
-                        </div>
-                        <div class="set-visual-dots">
-                            ${dotsHtml}
-                        </div>
+                        <div class="workout-meta-summary"><span>⏱️ 휴식: ${w.rest}초</span></div>
+                        <div class="set-visual-dots">${dotsHtml}</div>
                     </div>
-                    <button class="main-edit-trigger" onclick="toggleEditPanel('${w.id}')">⚙️ 수정</button>
+                    <div class="header-btn-group">
+                        <button class="${startBtnClass}" onclick="toggleSingleWorkoutMode('${w.id}')">${startBtnText}</button>
+                        ${!isCurrentActive ? `<button class="main-edit-trigger" onclick="toggleEditPanel('${w.id}')">⚙️ 설정</button>` : ''}
+                    </div>
                 </div>
 
                 <div class="workout-expanded-panel" id="panel-${w.id}">
-                    <div class="panel-row">
-                        <span>순서 변경</span>
-                        <div class="move-controls">
-                            <button class="panel-btn" onclick="moveWorkout('${w.id}', -1)">▲ 위로</button>
-                            <button class="panel-btn" onclick="moveWorkout('${w.id}', 1)">▼ 아래로</button>
-                        </div>
-                    </div>
-                    <div class="panel-row">
-                        <span>휴식시간 편집</span>
-                        <div>
-                            <input type="number" class="panel-rest-input" value="${w.rest}" onchange="updateRestTime('${w.id}', this.value)"> 초
-                        </div>
-                    </div>
-                    <div class="panel-row" style="justify-content: flex-end;">
-                        <button class="panel-btn panel-btn-del" onclick="deleteWorkout('${w.id}')">🗑️ 이 종목 제거</button>
-                    </div>
+                    <div class="panel-row"><span>순서 변경</span><div class="move-controls"><button class="panel-btn" onclick="moveWorkout('${w.id}', -1)">▲ 위로</button><button class="panel-btn" onclick="moveWorkout('${w.id}', 1)">▼ 아래로</button></div></div>
+                    <div class="panel-row"><span>휴식시간 편집</span><div><input type="number" class="panel-rest-input" value="${w.rest}" onchange="updateRestTime('${w.id}', this.value)"> 초</div></div>
+                    <div class="panel-row" style="justify-content: flex-end;"><button class="panel-btn panel-btn-del" onclick="deleteWorkout('${w.id}')">🗑️ 이 종목 제거</button></div>
                 </div>
                 
                 ${weightSection}
@@ -585,84 +453,25 @@
                     <button class="counter-btn" onclick="adjustValue('${w.id}', 'reps', 1)">+1</button>
                 </div>
 
-                <button class="log-btn" onclick="logSet('${w.id}', '${w.name}')">${primaryBtnText}</button>
-                
-                ${isPlayerRunning ? `<button class="log-btn" style="background-color:#1565c0; margin-top:8px;" onclick="nextPlayerStep()">➡️ 종목 종료 (다음 운동으로 넘어가기)</button>` : ''}
+                <button class="log-btn" onclick="logSet('${w.id}', '${w.name}')">${isCurrentActive ? "✔️ 이번 세트 완료" : "세트 완료"}</button>
             `;
             container.appendChild(card);
         });
     }
 
-    function nextPlayerStep() {
-        playerCurrentIndex++;
-        renderWorkouts();
-    }
-
-    function toggleEditPanel(id) {
-        const panel = document.getElementById(`panel-${id}`);
-        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function updateRestTime(id, newSeconds) {
-        const fullList = routineData[currentRoutine] || [];
-        const item = fullList.find(w => w.id === id);
-        if(item) item.rest = parseInt(newSeconds) || 0;
-        saveRoutineDB();
-        renderWorkouts();
-    }
-
-    function moveWorkout(id, direction) {
-        const fullList = routineData[currentRoutine] || [];
-        const index = fullList.findIndex(w => w.id === id);
-        if (index === -1) return;
-        
-        const newIndex = index + direction;
-        if (newIndex < 0 || newIndex >= fullList.length) return;
-        
-        const temp = fullList[index];
-        fullList[index] = fullList[newIndex];
-        fullList[newIndex] = temp;
-        
-        saveRoutineDB();
-        renderWorkouts();
-        const p = document.getElementById(`panel-${id}`);
-        if(p) p.style.display = 'block';
-    }
-
-    function deleteWorkout(id) {
-        if(!confirm("이 운동을 루틴에서 제외하겠습니까?")) return;
-        routineData[currentRoutine] = (routineData[currentRoutine] || []).filter(w => w.id !== id);
-        saveRoutineDB();
-        if(isPlayerRunning) isPlayerRunning = false;
-        renderWorkouts();
-    }
-
-    function adjustValue(id, key, amount) {
-        const fullList = routineData[currentRoutine] || [];
-        const item = fullList.find(w => w.id === id);
-        if(item) {
-            item[key] += amount;
-            if(item[key] < 0) item[key] = 0;
-            const el = document.getElementById(`${id}-${key}`);
-            if(el) el.innerText = item[key] + (key === 'weight' ? ' kg' : ' 회');
-            saveRoutineDB();
-        }
-    }
+    function toggleEditPanel(id) { const panel = document.getElementById(`panel-${id}`); panel.style.display = panel.style.display === 'block' ? 'none' : 'block'; }
+    function updateRestTime(id, newSeconds) { const item = routineData[currentRoutine].find(w => w.id === id); if(item) item.rest = parseInt(newSeconds) || 0; saveRoutineDB(); renderWorkouts(); }
+    function moveWorkout(id, direction) { const list = routineData[currentRoutine]; const idx = list.findIndex(w => w.id === id); if (idx === -1) return; const newIdx = idx + direction; if (newIdx < 0 || newIdx >= list.length) return; const temp = list[idx]; list[idx] = list[newIdx]; list[newIdx] = temp; saveRoutineDB(); renderWorkouts(); document.getElementById(`panel-${id}`).style.display = 'block'; }
+    function deleteWorkout(id) { if(!confirm("이 운동을 루틴에서 제외하겠습니까?")) return; routineData[currentRoutine] = routineData[currentRoutine].filter(w => w.id !== id); saveRoutineDB(); renderWorkouts(); }
+    function adjustValue(id, key, amount) { const item = routineData[currentRoutine].find(w => w.id === id); if(item) { item[key] += amount; if(item[key] < 0) item[key] = 0; const el = document.getElementById(`${id}-${key}`); if(el) el.innerText = item[key] + (key === 'weight' ? ' kg' : ' 회'); saveRoutineDB(); } }
 
     function logSet(id, name) {
-        if (selectedDateStr !== todayStr) {
-            alert("🔒 운동 기록은 당일(오늘 날짜)만 가능합니다!");
-            return;
-        }
-
-        const fullList = routineData[currentRoutine] || [];
-        const item = fullList.find(w => w.id === id);
-        
+        if (selectedDateStr !== todayStr) return alert("🔒 운동 기록은 당일(오늘 날짜)만 가능합니다!");
+        const item = routineData[currentRoutine].find(w => w.id === id);
         if (!database[todayStr]) database[todayStr] = [];
 
         const weightText = item.isBodyweight ? '맨몸' : `${item.weight}kg`;
         const timeText = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-
         const existingGroup = database[todayStr].find(log => log.name === name && log.weightDisplay === weightText);
         let totalSetsNum = 1;
 
@@ -674,9 +483,7 @@
         }
 
         localStorage.setItem('workout_db', JSON.stringify(database));
-        
-        const liveCounterBox = document.getElementById('liveCounterBox');
-        liveCounterBox.innerHTML = `📢 최근 완료: <span style="color:#fff;">${name} [${weightText}]</span> ➔ <span style="color:#4caf50; font-size:14px; text-decoration:underline;">${totalSetsNum}세트째</span> 완료! 🔥`;
+        document.getElementById('liveCounterBox').innerHTML = `📢 최근 완료: <span style="color:#fff;">${name} [${weightText}]</span> ➔ <span style="color:#4caf50; font-size:15px;">${totalSetsNum}세트째</span> 완료! 🔥`;
 
         initCalendar();
         renderWorkouts();
@@ -684,40 +491,41 @@
         startTimer(item.rest);
     }
 
+    // 🧹 하루 전체 기록을 한 번에 날리는 원터치 함수
+    function clearAllTodayLogs() {
+        if(!database[selectedDateStr] || database[selectedDateStr].length === 0) return alert("삭제할 기록이 존재하지 않습니다.");
+        if(!confirm(`⚠️ 경고: [${selectedDateStr}]의 모든 운동 기록을 한 번에 싹 지우시겠습니까? 복구는 불가능합니다.`)) return;
+        
+        delete database[selectedDateStr];
+        localStorage.setItem('workout_db', JSON.stringify(database));
+        
+        initCalendar();
+        renderWorkouts();
+        showHistoryAt(selectedDateStr);
+        document.getElementById('liveCounterBox').innerText = "현재 진행 중인 세트가 없습니다.";
+    }
+
     function showHistoryAt(dateStr) {
-        document.getElementById('historyTitle').innerText = `📅 ${dateStr}의 전체 기록 피드`;
+        document.getElementById('historyTitle').innerText = `${dateStr}의 전체 기록 피드`;
         const content = document.getElementById('historyContent');
         content.innerHTML = '';
-
-        if (!database[dateStr] || database[dateStr].length === 0) {
-            content.innerText = '이 날 기록된 운동이 없습니다.';
-            return;
-        }
+        if (!database[dateStr] || database[dateStr].length === 0) return content.innerText = '기록된 운동이 없습니다.';
 
         database[dateStr].forEach((log, groupIdx) => {
             const row = document.createElement('div');
             row.className = 'log-entry';
-            
             let setRowsHtml = '';
             log.sets.forEach((s, sIdx) => {
                 setRowsHtml += `
                     <div class="set-row">
                         <span style="color:var(--text-muted); font-size:12px;">└ ${s.setNum}세트: ${s.reps}회 <small style="color:#555;">(${s.time})</small></span>
                         <div>
-                            <button class="inline-btn btn-edit" onclick="editSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">✏️ 수정</button>
-                            <button class="inline-btn btn-del" onclick="deleteSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">🗑️ 삭제</button>
+                            <button class="inline-btn btn-edit" onclick="editSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">✏️</button>
+                            <button class="inline-btn btn-del" onclick="deleteSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">🗑️</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
-
-            row.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-weight:bold; padding: 6px; background:#2a2a2a; border-radius:4px 4px 0 0; font-size:13px;">
-                    <span>${log.name}</span>
-                    <span style="color:#ff9800;">[${log.weightDisplay}]</span>
-                </div>
-                <div style="padding: 6px;">${setRowsHtml}</div>
-            `;
+            row.innerHTML = `<div style="display:flex; justify-content:space-between; font-weight:bold; padding:6px; background:#2a2a2a; border-radius:4px 4px 0 0; font-size:13px;"><span>${log.name}</span><span style="color:#ff9800;">[${log.weightDisplay}]</span></div><div style="padding: 6px;">${setRowsHtml}</div>`;
             content.appendChild(row);
         });
     }
@@ -725,68 +533,39 @@
     function editSpecificSet(dateStr, groupIdx, sIdx) {
         const log = database[dateStr][groupIdx];
         const targetSet = log.sets[sIdx];
-        const newReps = prompt(`[${log.name}] ${targetSet.setNum}세트의 수정할 횟수를 입력하십시오.`, targetSet.reps);
-        if (newReps !== null && !isNaN(newReps) && newReps.trim() !== "") {
-            targetSet.reps = parseInt(newReps);
-            saveAndReloadHistory(dateStr);
-        }
+        const newReps = prompt(`[${log.name}] ${targetSet.setNum}세트의 수정할 횟수 입력`, targetSet.reps);
+        if (newReps !== null && !isNaN(newReps) && newReps.trim() !== "") { targetSet.reps = parseInt(newReps); saveAndReloadHistory(dateStr); }
     }
 
     function deleteSpecificSet(dateStr, groupIdx, sIdx) {
-        if (!confirm("이 세트 기록을 완전히 삭제하시겠습니까?")) return;
+        if (!confirm("이 세트를 삭제하시겠습니까?")) return;
         const log = database[dateStr][groupIdx];
         log.sets.splice(sIdx, 1);
-
-        if (log.sets.length === 0) {
-            database[dateStr].splice(groupIdx, 1);
-        } else {
-            log.sets.forEach((s, index) => { s.setNum = index + 1; });
-        }
+        if (log.sets.length === 0) database[dateStr].splice(groupIdx, 1);
+        else log.sets.forEach((s, index) => { s.setNum = index + 1; });
         saveAndReloadHistory(dateStr);
         renderWorkouts();
     }
 
-    function saveAndReloadHistory(dateStr) {
-        if (database[dateStr] && database[dateStr].length === 0) delete database[dateStr];
-        localStorage.setItem('workout_db', JSON.stringify(database));
-        initCalendar();
-        showHistoryAt(dateStr);
-    }
+    function saveAndReloadHistory(dateStr) { if (database[dateStr] && database[dateStr].length === 0) delete database[dateStr]; localStorage.setItem('workout_db', JSON.stringify(database)); initCalendar(); showHistoryAt(dateStr); }
 
     function initCalendar() {
         const now = new Date();
         document.getElementById('calendarMonthYear').innerText = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
         const grid = document.getElementById('calendarGrid');
         grid.innerHTML = '';
-
         const days = ['일', '월', '화', '수', '목', '금', '토'];
-        days.forEach(d => {
-            const label = document.createElement('div');
-            label.className = 'calendar-day-label';
-            label.innerText = d;
-            grid.appendChild(label);
-        });
-
+        days.forEach(d => { const label = document.createElement('div'); label.className = 'calendar-day-label'; label.innerText = d; grid.appendChild(label); });
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-        
         for(let i=0; i<startOfMonth.getDay(); i++) grid.appendChild(document.createElement('div'));
-
         for(let d=1; d<=endOfMonth.getDate(); d++) {
             const dayBox = document.createElement('div');
-            dayBox.className = 'calendar-day';
-            dayBox.innerText = d;
-            
+            dayBox.className = 'calendar-day'; dayBox.innerText = d;
             const targetDateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             if (database[targetDateStr] && database[targetDateStr].length > 0) dayBox.classList.add('has-log');
             if (targetDateStr === selectedDateStr) dayBox.classList.add('selected');
-
-            dayBox.onclick = () => {
-                document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected'));
-                dayBox.classList.add('selected');
-                selectedDateStr = targetDateStr;
-                showHistoryAt(targetDateStr);
-            };
+            dayBox.onclick = () => { document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected')); dayBox.classList.add('selected'); selectedDateStr = targetDateStr; showHistoryAt(targetDateStr); };
             grid.appendChild(dayBox);
         }
     }
@@ -796,22 +575,13 @@
         timerTimeLeft = seconds;
         const display = document.getElementById('timerDisplay');
         const status = document.getElementById('timerStatus');
-        status.innerText = "🔥 근육 회복 중... 강해지는 시간! 🔥";
-        status.style.color = "#ff9800";
-
+        status.innerText = "🔥 근육 회복 중... 강해지는 시간! 🔥"; status.style.color = "#ff9800";
         timerInterval = setInterval(() => {
             timerTimeLeft--;
             const mins = Math.floor(timerTimeLeft / 60).toString().padStart(2, '0');
             const secs = (timerTimeLeft % 60).toString().padStart(2, '0');
             display.innerText = `${mins}:${secs}`;
-
-            if (timerTimeLeft <= 0) {
-                clearInterval(timerInterval);
-                display.innerText = "00:00";
-                status.innerText = "💪 휴식 끝! 다음 세트 폭격하십시오! 💪";
-                status.style.color = "#4caf50";
-                if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-            }
+            if (timerTimeLeft <= 0) { clearInterval(timerInterval); display.innerText = "00:00"; status.innerText = "💪 휴식 끝! 다음 세트 폭격하십시오! 💪"; status.style.color = "#4caf50"; if (navigator.vibrate) navigator.vibrate([500, 200, 500]); }
         }, 1000);
     }
 </script>
