@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>강철 오운완 시스템 v7.8</title>
+    <title>강철 오운완 시스템 v7.7</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -118,7 +118,31 @@
         .btn-add-tab { background-color: #2e7d32; }
         .btn-del-tab { background-color: #c62828; }
 
-        /* 🏋️‍♂️ 종목 제어 카드 */
+        /* 🚀 신체 스펙 입력 카드 */
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+        }
+        .profile-inputs {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .profile-input {
+            flex: 1;
+            padding: 8px;
+            background: #121212;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* 🏋️‍♂️ 운동 제어 카드 */
         .workout-card {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -201,14 +225,22 @@
 
 <div class="container">
     <header>
-        <h1>⚡ 강철 오운완 시스템 v7.8</h1>
-        <p style="color: var(--text-muted); margin: 3px 0 0 0; font-size: 12px;">종목별 매치 플레이 시스템</p>
+        <h1>⚡ 강철 오운완 시스템 v7.7</h1>
+        <p style="color: var(--text-muted); margin: 3px 0 0 0; font-size: 12px;">칼로리 대시보드 및 실시간 연동판</p>
     </header>
 
     <div class="status-board">
         <div class="timer-display" id="timerDisplay">00:00</div>
         <div style="color: var(--accent-color); font-size: 12px; font-weight: bold; margin-bottom: 3px;" id="timerStatus">대기 중</div>
         <div class="live-counter" id="liveCounterBox">현재 진행 중인 세트가 없습니다.</div>
+    </div>
+
+    <div class="profile-card">
+        <div style="font-weight: bold; color: var(--accent-color); font-size: 13px;">🏃 개인 신체 스펙 설정 (실시간 칼로리 연동)</div>
+        <div class="profile-inputs">
+            <input type="number" id="userHeight" class="profile-input" placeholder="키 (cm)" onchange="saveProfileSpec()">
+            <input type="number" id="userWeight" class="profile-input" placeholder="몸무게 (kg)" onchange="saveProfileSpec()">
+        </div>
     </div>
 
     <div class="routine-management" id="routineMetaBox">
@@ -256,33 +288,34 @@
     
     const defaultRoutine = {
         "1.가슴_어깨": [
-            { id: 'p1', name: '벤치프레스', weight: 60, reps: 7, rest: 180, weightUnit: 5, isBodyweight: false },
-            { id: 'p2', name: '인클 덤벨프레스', weight: 15, reps: 15, rest: 120, weightUnit: 1, isBodyweight: false },
-            { id: 'p3', name: 'ohp', weight: 40, reps: 6, rest: 120, weightUnit: 5, isBodyweight: false },
-            { id: 'p4', name: '사레레', weight: 4, reps: 20, rest: 60, weightUnit: 1, isBodyweight: false },
-            { id: 'p5', name: '인클 펙덱', weight: 8, reps: 15, rest: 60, weightUnit: 1, isBodyweight: false }
+            { id: 'p1', name: '벤치프레스', weight: 60, reps: 7, rest: 180, weightUnit: 5, isBodyweight: false, met: 6.0 },
+            { id: 'p2', name: '인클 덤벨프레스', weight: 15, reps: 15, rest: 120, weightUnit: 1, isBodyweight: false, met: 6.0 },
+            { id: 'p3', name: 'ohp', weight: 40, reps: 6, rest: 120, weightUnit: 5, isBodyweight: false, met: 6.0 },
+            { id: 'p4', name: '사레레', weight: 4, reps: 20, rest: 60, weightUnit: 1, isBodyweight: false, met: 5.0 },
+            { id: 'p5', name: '인클 펙덱', weight: 8, reps: 15, rest: 60, weightUnit: 1, isBodyweight: false, met: 5.0 }
         ],
         "2.등": [
-            { id: 'l1', name: '데드', weight: 120, reps: 5, rest: 240, weightUnit: 5, isBodyweight: false },
-            { id: 'l2', name: '바벨로우', weight: 50, reps: 8, rest: 120, weightUnit: 5, isBodyweight: false },
-            { id: 'l3', name: '턱걸이', weight: 0, reps: 5, rest: 120, weightUnit: 1, isBodyweight: true }
+            { id: 'l1', name: '데드', weight: 120, reps: 5, rest: 240, weightUnit: 5, isBodyweight: false, met: 7.0 },
+            { id: 'l2', name: '바벨로우', weight: 50, reps: 8, rest: 120, weightUnit: 5, isBodyweight: false, met: 6.0 },
+            { id: 'l3', name: '턱걸이', weight: 0, reps: 5, rest: 120, weightUnit: 1, isBodyweight: true, met: 6.0 }
         ],
         "3.하체": [
-            { id: 'g1', name: '스쿼트', weight: 90, reps: 5, rest: 240, weightUnit: 5, isBodyweight: false },
-            { id: 'g2', name: '런지', weight: 0, reps: 12, rest: 90, weightUnit: 1, isBodyweight: false },
-            { id: 'g3', name: '레그레이즈', weight: 0, reps: 15, rest: 60, weightUnit: 1, isBodyweight: true }
+            { id: 'g1', name: '스쿼트', weight: 90, reps: 5, rest: 240, weightUnit: 5, isBodyweight: false, met: 7.5 },
+            { id: 'g2', name: '런지', weight: 0, reps: 12, rest: 90, weightUnit: 1, isBodyweight: false, met: 6.5 },
+            { id: 'g3', name: '레그레이즈', weight: 0, reps: 15, rest: 60, weightUnit: 1, isBodyweight: true, met: 4.0 }
         ]
     };
     
-    let routineData = JSON.parse(localStorage.getItem('routine_db_v78')) || defaultRoutine;
+    let routineData = JSON.parse(localStorage.getItem('routine_db_v77_cal')) || defaultRoutine;
     let currentRoutine = Object.keys(routineData)[0] || "1.가슴_어깨";
 
-    // 🚀 종목별 독립 구동 타겟 세팅 변수
     let activeSingleWorkoutId = null;
 
     const todayStr = getFormattedDate(new Date());
     let selectedDateStr = todayStr;
 
+    // 초기 신체 스펙 바인딩
+    loadProfileSpec();
     initCalendar();
     renderTabs();
     renderWorkouts();
@@ -295,7 +328,32 @@
         return `${yyyy}-${mm}-${dd}`;
     }
 
-    // 🏃 종목별 개별 시작 토글 제어 핵심 함수
+    // 👤 신체 스펙 로드/저장 로직
+    function loadProfileSpec() {
+        const spec = JSON.parse(localStorage.getItem('user_spec')) || { height: 175, weight: 75 };
+        document.getElementById('userHeight').value = spec.height;
+        document.getElementById('userWeight').value = spec.weight;
+    }
+
+    function saveProfileSpec() {
+        const h = parseFloat(document.getElementById('userHeight').value) || 175;
+        const w = parseFloat(document.getElementById('userWeight').value) || 75;
+        localStorage.setItem('user_spec', JSON.stringify({ height: h, weight: w }));
+        renderWorkouts();
+        showHistoryAt(selectedDateStr);
+    }
+
+    // 🧮 칼로리 계산 공식 수식 모델 파트
+    // 공식: 소모 칼로리 = MET * 3.5 * 몸무게(kg) / 200 * 운동시간(분)
+    // 웨이트 세트당 평균 가동 시간 및 텐션을 고려해 세트당 평균 45초~1분(0.8분) 수준 보정 적용 및 무게 비례 계수 추가 연동
+    function calculateKcal(met, weight, reps, targetWeight) {
+        const baseWeight = 75; 
+        const weightFactor = targetWeight > 0 ? (1 + (targetWeight / baseWeight) * 0.1) : 1; 
+        const minutes = (reps * 4) / 60; // 1회 반복당 평균 4초 기동 기준 시간 계산
+        let kcal = met * 3.5 * weight / 200 * minutes * weightFactor;
+        return parseFloat(kcal.toFixed(1));
+    }
+
     function toggleSingleWorkoutMode(id) {
         const metaBox = document.getElementById('routineMetaBox');
         const addBox = document.getElementById('addWorkoutBox');
@@ -303,14 +361,12 @@
         const historyBox = document.getElementById('historyBox');
 
         if(activeSingleWorkoutId === id) {
-            // 종료 버튼을 눌렀을 때: 전체 해제하고 원래대로 복귀
             activeSingleWorkoutId = null;
             metaBox.style.display = 'flex';
             addBox.style.display = 'block';
             calendarBox.style.display = 'block';
             historyBox.style.display = 'block';
         } else {
-            // 시작 버튼을 눌렀을 때: 타겟 ID만 저장하고 주변 판넬들 싹 숨김
             activeSingleWorkoutId = id;
             metaBox.style.display = 'none';
             addBox.style.display = 'none';
@@ -324,8 +380,6 @@
         const container = document.getElementById('routineTabsContainer');
         container.innerHTML = '';
         const keys = Object.keys(routineData);
-        if(keys.length === 0) return;
-
         keys.forEach(key => {
             const btn = document.createElement('button');
             btn.className = `tab-btn ${key === currentRoutine ? 'active' : ''}`;
@@ -341,10 +395,10 @@
     }
 
     function addCustomRoutine() {
-        const newName = prompt("새로 추가할 루틴 이름을 입력하십시오.");
+        const newName = prompt("새 루틴 이름을 입력하십시오.");
         if(!newName || !newName.trim()) return;
         const cleanName = newName.trim();
-        if(routineData[cleanName]) return alert("이미 있는 루틴입니다.");
+        if(routineData[cleanName]) return alert("이미 존재합니다.");
         routineData[cleanName] = [];
         currentRoutine = cleanName;
         saveRoutineDB();
@@ -361,13 +415,13 @@
         renderWorkouts();
     }
 
-    function saveRoutineDB() { localStorage.setItem('routine_db_v78', JSON.stringify(routineData)); }
+    function saveRoutineDB() { localStorage.setItem('routine_db_v77_cal', JSON.stringify(routineData)); }
 
     function addNewWorkout() {
         const nameInput = document.getElementById('newWorkoutName');
         const restInput = document.getElementById('newWorkoutRest');
         const isBodyweightCheck = document.getElementById('isBodyweight');
-        if (!nameInput.value.trim()) return alert('운동명을 적으십시오!');
+        if (!nameInput.value.trim()) return alert('운동명을 입력하십시오!');
 
         const name = nameInput.value.trim();
         const isHeavy = name.includes('벤치') || name.includes('스쿼트') || name.includes('데드') || name.includes('로우') || name.includes('프레스') || name.includes('ohp');
@@ -377,7 +431,8 @@
             id: newId, name: name,
             weight: isBodyweightCheck.checked ? 0 : (isHeavy ? 40 : 10),
             reps: 10, rest: parseInt(restInput.value) || 60,
-            weightUnit: isHeavy ? 5 : 1, isBodyweight: isBodyweightCheck.checked
+            weightUnit: isHeavy ? 5 : 1, isBodyweight: isBodyweightCheck.checked,
+            met: isHeavy ? 6.5 : 4.5
         });
         saveRoutineDB();
         nameInput.value = '';
@@ -390,10 +445,11 @@
         container.innerHTML = '';
         let fullList = routineData[currentRoutine] || [];
 
-        // 🏃 분기 처리: 개별 집중 모드가 켜져있다면 해당 아이템만 필터링하여 출력
         if(activeSingleWorkoutId !== null) {
             fullList = fullList.filter(w => w.id === activeSingleWorkoutId);
         }
+
+        const spec = JSON.parse(localStorage.getItem('user_spec')) || { weight: 75 };
 
         fullList.forEach((w) => {
             const card = document.createElement('div');
@@ -411,6 +467,9 @@
                 dotsHtml += `<span class="set-dot ${i < completedSets ? 'done' : ''}"></span>`;
             }
 
+            // 실시간 소모 추정 칼로리 연동 표출 계산
+            const estimatedKcal = calculateKcal(w.met || 5.0, spec.weight, w.reps, w.weight);
+
             let weightSection = w.isBodyweight ? 
                 `<div class="input-group"><div class="control-label">무게</div><div class="bodyweight-display">💪 맨몸 운동</div></div>` :
                 `<div class="input-group">
@@ -420,7 +479,6 @@
                     <button class="counter-btn" onclick="adjustValue('${w.id}', 'weight', ${w.weightUnit})">+${w.weightUnit}</button>
                 </div>`;
 
-            // 상태에 따른 시작/종료 버튼 스타일 바인딩
             const isCurrentActive = activeSingleWorkoutId === w.id;
             const startBtnText = isCurrentActive ? "⏹️ 종목 종료" : "▶️ 운동 시작";
             const startBtnClass = isCurrentActive ? "main-start-trigger active" : "main-start-trigger";
@@ -429,19 +487,22 @@
                 <div class="workout-main-info">
                     <div>
                         <div class="workout-title">${w.name}</div>
-                        <div class="workout-meta-summary"><span>⏱️ 휴식: ${w.rest}초</span></div>
+                        <div class="workout-meta-summary">
+                            <span>⏱️ 휴식: ${w.rest}초</span> | 
+                            <span style="color:var(--danger-color); font-weight:bold;">🔥 1세트당 약 ${estimatedKcal} kcal</span>
+                        </div>
                         <div class="set-visual-dots">${dotsHtml}</div>
                     </div>
                     <div class="header-btn-group">
                         <button class="${startBtnClass}" onclick="toggleSingleWorkoutMode('${w.id}')">${startBtnText}</button>
-                        ${!isCurrentActive ? `<button class="main-edit-trigger" onclick="toggleEditPanel('${w.id}')">⚙️ 설정</button>` : ''}
+                        ${!isCurrentActive ? `<button class="main-edit-trigger" onclick="toggleEditPanel('${w.id}')">⚙️</button>` : ''}
                     </div>
                 </div>
 
                 <div class="workout-expanded-panel" id="panel-${w.id}">
                     <div class="panel-row"><span>순서 변경</span><div class="move-controls"><button class="panel-btn" onclick="moveWorkout('${w.id}', -1)">▲ 위로</button><button class="panel-btn" onclick="moveWorkout('${w.id}', 1)">▼ 아래로</button></div></div>
                     <div class="panel-row"><span>휴식시간 편집</span><div><input type="number" class="panel-rest-input" value="${w.rest}" onchange="updateRestTime('${w.id}', this.value)"> 초</div></div>
-                    <div class="panel-row" style="justify-content: flex-end;"><button class="panel-btn panel-btn-del" onclick="deleteWorkout('${w.id}')">🗑️ 이 종목 제거</button></div>
+                    <div class="panel-row" style="justify-content: flex-end;"><button class="panel-btn panel-btn-del" onclick="deleteWorkout('${w.id}')">🗑️ 제거</button></div>
                 </div>
                 
                 ${weightSection}
@@ -462,13 +523,17 @@
     function toggleEditPanel(id) { const panel = document.getElementById(`panel-${id}`); panel.style.display = panel.style.display === 'block' ? 'none' : 'block'; }
     function updateRestTime(id, newSeconds) { const item = routineData[currentRoutine].find(w => w.id === id); if(item) item.rest = parseInt(newSeconds) || 0; saveRoutineDB(); renderWorkouts(); }
     function moveWorkout(id, direction) { const list = routineData[currentRoutine]; const idx = list.findIndex(w => w.id === id); if (idx === -1) return; const newIdx = idx + direction; if (newIdx < 0 || newIdx >= list.length) return; const temp = list[idx]; list[idx] = list[newIdx]; list[newIdx] = temp; saveRoutineDB(); renderWorkouts(); document.getElementById(`panel-${id}`).style.display = 'block'; }
-    function deleteWorkout(id) { if(!confirm("이 운동을 루틴에서 제외하겠습니까?")) return; routineData[currentRoutine] = routineData[currentRoutine].filter(w => w.id !== id); saveRoutineDB(); renderWorkouts(); }
-    function adjustValue(id, key, amount) { const item = routineData[currentRoutine].find(w => w.id === id); if(item) { item[key] += amount; if(item[key] < 0) item[key] = 0; const el = document.getElementById(`${id}-${key}`); if(el) el.innerText = item[key] + (key === 'weight' ? ' kg' : ' 회'); saveRoutineDB(); } }
+    function deleteWorkout(id) { if(!confirm("제외하겠습니까?")) return; routineData[currentRoutine] = routineData[currentRoutine].filter(w => w.id !== id); saveRoutineDB(); renderWorkouts(); }
+    function adjustValue(id, key, amount) { const item = routineData[currentRoutine].find(w => w.id === id); if(item) { item[key] += amount; if(item[key] < 0) item[key] = 0; const el = document.getElementById(`${id}-${key}`); if(el) el.innerText = item[key] + (key === 'weight' ? ' kg' : ' 회'); saveRoutineDB(); if(key==='weight' || key==='reps') renderWorkouts(); } }
 
     function logSet(id, name) {
-        if (selectedDateStr !== todayStr) return alert("🔒 운동 기록은 당일(오늘 날짜)만 가능합니다!");
+        if (selectedDateStr !== todayStr) return alert("🔒 운동 기록은 당일만 가능합니다!");
         const item = routineData[currentRoutine].find(w => w.id === id);
         if (!database[todayStr]) database[todayStr] = [];
+
+        const spec = JSON.parse(localStorage.getItem('user_spec')) || { weight: 75 };
+        // 세트당 소모 칼로리 정밀 계산 후 DB 동적 주입
+        const calculatedBurn = calculateKcal(item.met || 5.0, spec.weight, item.reps, item.weight);
 
         const weightText = item.isBodyweight ? '맨몸' : `${item.weight}kg`;
         const timeText = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
@@ -477,13 +542,13 @@
 
         if (existingGroup) {
             totalSetsNum = existingGroup.sets.length + 1;
-            existingGroup.sets.push({ setNum: totalSetsNum, reps: item.reps, time: timeText });
+            existingGroup.sets.push({ setNum: totalSetsNum, reps: item.reps, time: timeText, kcal: calculatedBurn });
         } else {
-            database[todayStr].push({ name: name, weightDisplay: weightText, sets: [{ setNum: 1, reps: item.reps, time: timeText }] });
+            database[todayStr].push({ name: name, weightDisplay: weightText, sets: [{ setNum: 1, reps: item.reps, time: timeText, kcal: calculatedBurn }] });
         }
 
         localStorage.setItem('workout_db', JSON.stringify(database));
-        document.getElementById('liveCounterBox').innerHTML = `📢 최근 완료: <span style="color:#fff;">${name} [${weightText}]</span> ➔ <span style="color:#4caf50; font-size:15px;">${totalSetsNum}세트째</span> 완료! 🔥`;
+        updateTopDashboard(name, weightText, totalSetsNum, calculatedBurn);
 
         initCalendar();
         renderWorkouts();
@@ -491,10 +556,23 @@
         startTimer(item.rest);
     }
 
-    // 🧹 하루 전체 기록을 한 번에 날리는 원터치 함수
+    // 칼로리가 포함된 실시간 통합 대시보드 갱신 함수
+    function updateTopDashboard(name, weightText, totalSetsNum, burnKcal) {
+        let todayTotalKcal = 0;
+        if(database[todayStr]) {
+            database[todayStr].forEach(log => {
+                log.sets.forEach(s => todayTotalKcal += (s.kcal || 0));
+            });
+        }
+        document.getElementById('liveCounterBox').innerHTML = `
+            📢 최근 완료: <span style="color:#fff;">${name} [${weightText}] ${totalSetsNum}세트</span> 완료 (+${burnKcal}kcal) <br>
+            🔥 <span style="color:var(--danger-color); font-size:14px; font-weight:bold;">오늘의 누적 소모 칼로리: ${todayTotalKcal.toFixed(1)} kcal</span>
+        `;
+    }
+
     function clearAllTodayLogs() {
-        if(!database[selectedDateStr] || database[selectedDateStr].length === 0) return alert("삭제할 기록이 존재하지 않습니다.");
-        if(!confirm(`⚠️ 경고: [${selectedDateStr}]의 모든 운동 기록을 한 번에 싹 지우시겠습니까? 복구는 불가능합니다.`)) return;
+        if(!database[selectedDateStr] || database[selectedDateStr].length === 0) return alert("삭제할 기록이 없습니다.");
+        if(!confirm(`⚠️ 경고: [${selectedDateStr}]의 모든 기록과 소모 칼로리 데이터를 삭제하시겠습니까?`)) return;
         
         delete database[selectedDateStr];
         localStorage.setItem('workout_db', JSON.stringify(database));
@@ -511,14 +589,21 @@
         content.innerHTML = '';
         if (!database[dateStr] || database[dateStr].length === 0) return content.innerText = '기록된 운동이 없습니다.';
 
+        let dayTotalKcal = 0;
+
         database[dateStr].forEach((log, groupIdx) => {
             const row = document.createElement('div');
             row.className = 'log-entry';
             let setRowsHtml = '';
             log.sets.forEach((s, sIdx) => {
+                const setKcal = s.kcal || 0;
+                dayTotalKcal += setKcal;
                 setRowsHtml += `
                     <div class="set-row">
-                        <span style="color:var(--text-muted); font-size:12px;">└ ${s.setNum}세트: ${s.reps}회 <small style="color:#555;">(${s.time})</small></span>
+                        <span style="color:var(--text-muted); font-size:12px;">
+                            └ ${s.setNum}세트: ${s.reps}회 
+                            <small style="color:var(--danger-color); font-weight:bold; margin-left:5px;">[${setKcal} kcal]</small>
+                        </span>
                         <div>
                             <button class="inline-btn btn-edit" onclick="editSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">✏️</button>
                             <button class="inline-btn btn-del" onclick="deleteSpecificSet('${dateStr}', ${groupIdx}, ${sIdx})">🗑️</button>
@@ -528,17 +613,33 @@
             row.innerHTML = `<div style="display:flex; justify-content:space-between; font-weight:bold; padding:6px; background:#2a2a2a; border-radius:4px 4px 0 0; font-size:13px;"><span>${log.name}</span><span style="color:#ff9800;">[${log.weightDisplay}]</span></div><div style="padding: 6px;">${setRowsHtml}</div>`;
             content.appendChild(row);
         });
+
+        // 하단 피드창에도 해당 날짜 총 칼로리 누적액 노출 보정
+        const totalBox = document.createElement('div');
+        totalBox.style.cssText = "padding:10px; margin-top:10px; border-top:1px solid #444; color:var(--danger-color); font-weight:bold; text-align:right; font-size:14px;";
+        totalBox.innerHTML = `🔥 이 날의 총 소모 칼로리: ${dayTotalKcal.toFixed(1)} kcal`;
+        content.appendChild(totalBox);
     }
 
     function editSpecificSet(dateStr, groupIdx, sIdx) {
         const log = database[dateStr][groupIdx];
         const targetSet = log.sets[sIdx];
         const newReps = prompt(`[${log.name}] ${targetSet.setNum}세트의 수정할 횟수 입력`, targetSet.reps);
-        if (newReps !== null && !isNaN(newReps) && newReps.trim() !== "") { targetSet.reps = parseInt(newReps); saveAndReloadHistory(dateStr); }
+        if (newReps !== null && !isNaN(newReps) && newReps.trim() !== "") { 
+            targetSet.reps = parseInt(newReps); 
+            // 횟수 변동에 따른 소모 칼로리 재조정 연동
+            const spec = JSON.parse(localStorage.getItem('user_spec')) || { weight: 75 };
+            const fullList = [].concat(...Object.values(routineData));
+            const matched = fullList.find(w => w.name === log.name) || { met: 5.0 };
+            const rawWeight = parseFloat(log.weightDisplay) || 0;
+            targetSet.kcal = calculateKcal(matched.met, spec.weight, targetSet.reps, rawWeight);
+            
+            saveAndReloadHistory(dateStr); 
+        }
     }
 
     function deleteSpecificSet(dateStr, groupIdx, sIdx) {
-        if (!confirm("이 세트를 삭제하시겠습니까?")) return;
+        if (!confirm("삭제하시겠습니까?")) return;
         const log = database[dateStr][groupIdx];
         log.sets.splice(sIdx, 1);
         if (log.sets.length === 0) database[dateStr].splice(groupIdx, 1);
